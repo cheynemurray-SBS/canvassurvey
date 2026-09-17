@@ -316,12 +316,6 @@
     scroll-margin-top: 64px;
   }
 
-  html.embedded-scroll{
-    height: 100vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
   .group-head{
     display:flex;
     align-items: flex-end;
@@ -834,18 +828,6 @@
           t.classList.toggle('active', t.getAttribute('data-target') === id);
         });
       }
-
-      // Canvas embeds this page as a CROSS-ORIGIN iframe (this page lives on
-      // GitHub Pages; Canvas lives on a different domain). Browsers block a
-      // frame from scrolling its parent into view across an origin boundary,
-      // so native <a href="#..."> navigation can't bring a section into view
-      // if the outer Canvas page owns the scrolling. Instead, force this
-      // document to own its own scrolling when embedded: cap it to the
-      // iframe's own viewport height with internal overflow, so
-      // window.scrollTo() below always has a real same-origin scroll context.
-      var inIframe = false;
-      try { inIframe = window.self !== window.top; } catch (e) { inIframe = true; }
-      if (inIframe) { document.documentElement.classList.add('embedded-scroll'); }
 
       tabs.forEach(function(tab){
         tab.addEventListener('click', function(e){
