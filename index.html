@@ -45,6 +45,7 @@
     background: var(--paper-soft);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+    font-variation-settings: 'opsz' 40; /* Fraunces optical size: tames its swashy small-size cut for headings; ignored harmlessly by non-variable fonts */
   }
 
   a{ color: inherit; }
@@ -119,19 +120,14 @@
     margin: 0 0 14px;
     max-width: 17ch;
     text-shadow: 0 3px 18px rgba(0,0,0,0.3);
-  }
-  .hero h1 .word{
-    display: inline-block;
-    white-space: nowrap;
-  }
-  .hero h1 .ch{
-    display: inline-block;
+    font-variation-settings: 'opsz' 72;
     opacity: 0;
-    transform: translateY(20px);
-    animation: chIn .65s cubic-bezier(.2,.8,.2,1) forwards;
+    transform: translateY(16px);
+    animation: heroTitleIn .7s cubic-bezier(.2,.8,.2,1) forwards;
+    animation-delay: .15s;
   }
-  @keyframes chIn{
-    from{ opacity:0; transform: translateY(20px); }
+  @keyframes heroTitleIn{
+    from{ opacity:0; transform: translateY(16px); }
     to{ opacity:1; transform: translateY(0); }
   }
 
@@ -229,7 +225,7 @@
 
   @media (prefers-reduced-motion: reduce){
     .hero-marks .ring{ animation: none; }
-    .hero h1 .ch{ opacity:1; transform:none; animation:none; }
+    .hero h1{ opacity:1; transform:none; animation:none; }
     .eyebrow, .hero p, .hero-cta{ opacity:1; animation:none; transform:none; }
     .ticker-track{ animation: none; }
     .hero-glow{ display:none; }
@@ -378,6 +374,7 @@
     color: var(--maroon);
     line-height: 1;
     white-space: nowrap;
+    font-variation-settings: 'opsz' 72;
   }
   .cycle-text{ font-size: 14.5px; line-height: 1.6; color: var(--ink); }
   .cycle-text span{ display:block; font-weight: 700; color: var(--maroon-dark); margin-bottom: 4px; }
@@ -768,32 +765,6 @@
 
   <script>
     (function(){
-      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var h1 = document.getElementById('heroTitle');
-      if (h1 && !reduceMotion){
-        var text = h1.textContent;
-        h1.setAttribute('aria-label', text);
-        h1.textContent = '';
-        var delay = 0;
-        var words = text.split(' ');
-        words.forEach(function(word, wi){
-          var wordSpan = document.createElement('span');
-          wordSpan.className = 'word';
-          Array.prototype.forEach.call(word, function(ch){
-            var span = document.createElement('span');
-            span.className = 'ch';
-            span.textContent = ch;
-            span.style.animationDelay = delay + 'ms';
-            wordSpan.appendChild(span);
-            delay += 10;
-          });
-          h1.appendChild(wordSpan);
-          if (wi < words.length - 1){
-            h1.appendChild(document.createTextNode(' '));
-          }
-        });
-      }
-
       var hero = document.querySelector('.hero');
       var glow = document.querySelector('.hero-glow');
       if (hero && glow && window.matchMedia && window.matchMedia('(pointer: fine)').matches){
