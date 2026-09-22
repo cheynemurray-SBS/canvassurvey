@@ -312,6 +312,17 @@
     scroll-margin-top: 64px;
   }
 
+  /* Only <html> owns the scroll here (never also <body>) — a nested pair of
+     scroll containers is what caused the earlier "clicking a tab does
+     nothing" bug: window.scrollTo() targets documentElement, and if body
+     also scrolls independently, the visible content and the element the
+     script is moving can silently drift apart. */
+  html.embedded-scroll{
+    height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .group-head{
     display:flex;
     align-items: flex-end;
@@ -799,6 +810,20 @@
           t.classList.toggle('active', t.getAttribute('data-target') === id);
         });
       }
+
+      // Apply the internal-scroll container only when actually embedded in
+      // an iframe (Canvas). This gives the tabs a real internal scroll
+      // range to move within, which is what makes clicking them do anything
+      // visible. Requires the outer <iframe> height in Canvas to be a
+      // moderate, fixed size (NOT tall enough to show the whole page at
+      // once) — if the iframe is sized to fit all content with no internal
+      // overflow, there is nothing left to scroll and the tabs will appear
+      // to do nothing, since the section they'd scroll to is already on
+      // screen and bringing it further into view would require scrolling
+      // the outer Canvas page itself, which a cross-origin iframe cannot do.
+      var inIframe = false;
+      try { inIframe = window.self !== window.top; } catch (e) { inIframe = true; }
+      if (inIframe) { document.documentElement.classList.add('embedded-scroll'); }
 
       tabs.forEach(function(tab){
         tab.addEventListener('click', function(e){
